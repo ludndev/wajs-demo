@@ -33,4 +33,22 @@ client.on('ready', () => {
     });
 });
 
+client.on('authenticated', (session) => {    
+    console.log('User is authenticated', session);
+    sessionData = session;
+    util.sendPayloadToWebhook({
+        on: 'authenticated',
+        msg: 'user_authenticated'
+    });
+    fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), (err) => {
+        if (err) {
+            console.error(err);
+            util.sendPayloadToWebhook({
+                on: 'authenticated',
+                msg: 'unable_to_save_session_info_to_session_file'
+            });
+        }
+    });
+});
+
 client.initialize();
