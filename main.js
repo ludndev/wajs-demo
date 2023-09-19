@@ -1,9 +1,20 @@
 require('dotenv').config()
 const qrcode = require('qrcode-terminal');
-const { Client } = require('whatsapp-web.js');
+const { Client, LocalAuth } = require('whatsapp-web.js');
 const util = require('./util');
 
-const client = new Client();
+const SESSION_FILE_PATH = './session.json';
+
+let sessionData;
+if(fs.existsSync(SESSION_FILE_PATH)) {
+    sessionData = require(SESSION_FILE_PATH);
+}
+
+const client = new Client({
+    authStrategy: new LocalAuth({
+        session: sessionData
+    })
+});
 
 client.on('qr', (qr) => {
     console.log('QR RECEIVED', qr);
